@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Files</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Files</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="files" multiple required>
+            <button type="submit">Upload</button>
+        </form>
+
+        <p><strong>Note:</strong> Files should not exceed 2GB in total.</p>
+
+        <div id="link-container" style="display: none;">
+            <h2>Share Link</h2>
+            <p>
+                Link: <a id="share-link" href="#" target="_blank"></a>
+                <button onclick="copyToClipboard('share-link')">Copy</button>
+            </p>
+            <p>
+                Password: <span id="share-password"></span>
+                <button onclick="copyToClipboard('share-password')">Copy</button>
+            </p>
+            <p>Time Remaining: <span id="timer">300</span> seconds</p>
+
+            <div id="qr-container" style="display: none;">
+                <h3>Scan QR Code</h3>
+                <img id="qr-code" src="" alt="QR Code">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById('link-container').style.display = 'block';
+                    document.getElementById('share-link').href = data.share_link;
+                    document.getElementById('share-link').innerText = data.share_link;
+                    document.getElementById('share-password').innerText = data.password;
+
+                    // Generate QR Code
+                    document.getElementById('qr-container').style.display = 'block';
+                    document.getElementById('qr-code').src = data.qr_code;
+
+                    // Timer countdown
+                    let timeLeft = 300;
+                    let timerInterval = setInterval(() => {
+                        timeLeft--;
+                        document.getElementById('timer').innerText = timeLeft;
+                        if (timeLeft <= 0) {
+                            clearInterval(timerInterval);
+                            document.getElementById('link-container').innerHTML = "<p style='color: red;'>Link Expired</p>";
+                        }
+                    }, 1000);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        function copyToClipboard(elementId) {
+            let text = document.getElementById(elementId).innerText;
+            let tempInput = document.createElement("input");
+            document.body.appendChild(tempInput);
+            tempInput.value = text;
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert("Copied: " + text);
+        }
+    </script>
+</body>
+</html>
