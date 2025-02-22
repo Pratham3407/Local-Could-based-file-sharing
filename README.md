@@ -4,10 +4,10 @@ A secure, temporary file-sharing web application built using Flask, JavaScript, 
 
 Features:
 
-✅ Secure file upload with password protection
-✅ Temporary shareable links with auto-expiration
-✅ QR code generation for easy access 
-✅ Automatic file deletion after 5 minutes for privacy
+1. Secure file upload with password protection
+2. Temporary shareable links with auto-expiration
+3. QR code generation for easy access 
+3. Automatic file deletion after 5 minutes for privacy
 
 Tech Stack:
 
