@@ -57,7 +57,7 @@ def upload_page():
     password = request.args.get('password')
     expiration = request.args.get('expiration')
     qr_code = request.args.get('qr_code')
-    return render_template('upload.html', share_link=share_link, password=password, expiration=expiration, qr_code=qr_code)
+    return render_template('index.html', share_link=share_link, password=password, expiration=expiration, qr_code=qr_code)
 
 @app.route('/upload', methods=['POST'])
 def upload_files():
